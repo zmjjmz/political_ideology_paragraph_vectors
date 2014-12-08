@@ -1,0 +1,8 @@
+!obj:pylearn2.datasets.csv_dataset.CSVDataset {
+        path: "/home/matt/Documents/NLP/Final_Project/data/pVec.csv",
+        task: "classification",
+        expect_labels: "y",
+        expect_headers: "n",
+        start: 0,
+        stop: 3000
+}

@@ -1,0 +1,69 @@
+!obj:pylearn2.train.Train {
+    dataset: &train !obj:pylearn2.datasets.csv_dataset.CSVDataset {
+        path: "/home/matt/Documents/NLP/Final_Project/data/tfidf.csv",
+        task: "classification",
+        expect_labels: "y",
+        expect_headers: "n",
+        start: 0,
+        stop: 3000
+    },
+    model: !obj:pylearn2.models.mlp.MLP {
+        layers: [
+                 !obj:pylearn2.models.mlp.Sigmoid {
+                     layer_name: 'h0',
+                     dim: %(dim_h0)i,
+                     sparse_init: 15,
+                 },
+                  !obj:pylearn2.models.mlp.Softmax {
+                     layer_name: 'y',
+                     n_classes: 3,
+                     irange: 0.
+                 }
+                ],
+        nvis: 300,
+        # target_space: !obj:pylearn2.space.IndexSpace{max_labels:3,dim:1,dtype:}
+    },
+    algorithm: !obj:pylearn2.training_algorithms.bgd.BGD {
+        batch_size: 10000,
+        line_search_mode: 'exhaustive',
+        conjugate: 1,
+        updates_per_batch: 10,
+        monitoring_dataset:
+            {
+                'train' : *train,
+                'valid' : !obj:pylearn2.datasets.csv_dataset.CSVDataset {
+                  path: "/home/matt/Documents/NLP/Final_Project/data/tfidf.csv",
+                  task: "classification",
+                  expect_labels: "y",
+                  expect_headers: "n",
+                  start: 3000,
+                  stop: 3100
+                },
+
+                'test'  : !obj:pylearn2.datasets.csv_dataset.CSVDataset {
+                  path: "/home/matt/Documents/NLP/Final_Project/data/tfidf.csv",
+                  task: "classification",
+                  expect_labels: "y",
+                  expect_headers: "n",
+                  start: 3100,
+                  stop: 4025
+                }
+            },
+        termination_criterion: !obj:pylearn2.termination_criteria.And {
+            criteria: [
+                !obj:pylearn2.termination_criteria.MonitorBased {
+                    channel_name: "valid_y_misclass"
+                },
+                !obj:pylearn2.termination_criteria.EpochCounter {
+                    max_epochs: %(max_epochs)i
+                }
+            ]
+        }
+    },
+    extensions: [
+        !obj:pylearn2.train_extensions.best_params.MonitorBasedSaveBest {
+             channel_name: 'valid_y_misclass',
+             save_path: "%(save_path)s/tfidf_best.pkl"
+        },
+    ]
+}

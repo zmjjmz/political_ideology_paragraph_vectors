@@ -1,0 +1,29 @@
+!obj:pylearn2.training_algorithms.bgd.BGD {
+        batch_size: %(batch_size)i,
+        line_search_mode: 'exhaustive',
+        conjugate: 1,
+        monitoring_dataset:
+            {
+                'train' : *train,
+                'valid' : !obj:pylearn2.datasets.csv_dataset.CSVDataset {
+                  path: "/home/matt/Documents/NLP/Final_Project/data/pVec.csv",
+                  task: "classification",
+                  expect_labels: "y",
+                  expect_headers: "n",
+                  start: 3000,
+                  stop: 3100
+                },
+
+                'test'  : !obj:pylearn2.datasets.csv_dataset.CSVDataset {
+                  path: "/home/matt/Documents/NLP/Final_Project/data/pVec.csv",
+                  task: "classification",
+                  expect_labels: "y",
+                  expect_headers: "n",
+                  start: 3100,
+                  stop: 4025
+                }
+            },
+        termination_criterion: !obj:pylearn2.termination_criteria.MonitorBased {
+            channel_name: "valid_y_misclass"
+        }
+    }

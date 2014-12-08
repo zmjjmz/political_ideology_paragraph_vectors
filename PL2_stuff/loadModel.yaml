@@ -1,0 +1,5 @@
+!obj:pylearn2.models.softmax_regression.SoftmaxRegression {
+    n_classes: 3,
+    irange: 0.,
+    input_space: !obj:pylearn2.space.VectorSpace {dim: 300, dtype: float64}
+}
